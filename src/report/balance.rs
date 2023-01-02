@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::journal::{Entry, Journal, Transaction};
+use crate::journal::{Journal};
 
 pub fn balance(journal: &Journal) -> HashMap<String, f64> {
     let sub_accounts_amounts = sub_account_balances(journal);
@@ -46,6 +46,7 @@ fn all_account_balances(sub_accounts_amounts: &HashMap<String, f64>) -> HashMap<
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::journal::{Entry, Transaction};
 
     #[test]
     fn test_balance() {
