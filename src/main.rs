@@ -1,4 +1,5 @@
 mod journal;
+mod report;
 
 use std::fs;
 use std::error::Error;
