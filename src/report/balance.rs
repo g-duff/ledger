@@ -3,6 +3,12 @@ use std::collections::HashMap;
 use crate::journal::{Entry, Journal, Transaction};
 
 pub fn balance(journal: &Journal) -> HashMap<String, f64> {
+    let sub_accounts_amounts = sub_account_balances(journal);
+    let all_accounts_amounts = all_account_balances(&sub_accounts_amounts);
+    return all_accounts_amounts;
+}
+
+fn sub_account_balances(journal: &Journal) -> HashMap<String, f64> {
     let mut sub_accounts_amounts = HashMap::new();
 
     for transaction in &journal.transactions {
@@ -12,6 +18,29 @@ pub fn balance(journal: &Journal) -> HashMap<String, f64> {
         }
     }
     return sub_accounts_amounts;
+}
+
+fn all_account_balances(sub_accounts_amounts: &HashMap<String, f64>) -> HashMap<String, f64>  {
+    let mut all_accounts_amounts = HashMap::new();
+    
+    for sub_account_name in sub_accounts_amounts.keys() {
+        let sub_account_amount = sub_accounts_amounts.get(sub_account_name).unwrap();
+
+        let mut account_name_components = sub_account_name.split(":");
+
+        let mut super_account_name = account_name_components.next().unwrap().clone().to_string();
+        let super_account_amount = all_accounts_amounts.entry(super_account_name.clone()).or_insert(0_f64);
+        *super_account_amount += sub_account_amount;
+
+        for account_name_component in account_name_components {
+            super_account_name.push(':');
+            super_account_name.push_str(account_name_component);
+
+            let super_account_amount = all_accounts_amounts.entry(super_account_name.clone()).or_insert(0_f64);
+            *super_account_amount += sub_account_amount;
+        }
+    }
+    return all_accounts_amounts;
 }
 
 #[cfg(test)]
@@ -43,8 +72,10 @@ mod tests {
 
         // Then
         let expected_balance = HashMap::from([
+                                             (String::from("assets"), -20_f64),
                                              (String::from("assets:saving"), -120_f64),
                                              (String::from("assets:current"), 100_f64),
+                                             (String::from("expenses"), 20_f64),
                                              (String::from("expenses:groceries"), 20_f64),
         ]);
         assert_eq!(expected_balance, actual_balance);
