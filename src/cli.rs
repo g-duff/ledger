@@ -18,31 +18,30 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     Balance {
-        #[arg(short, long)]
+        #[arg(short, long, required = true)]
         filepath: Option<String>,
     },
 }
 
 pub fn balance_handler(filepath_option: &Option<String>) -> Result<(), Box<dyn Error>> {
 
-    if let Some(filepath) = filepath_option.as_deref() {
-        let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
-        let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
+    let filepath = filepath_option.as_deref().expect("balance filepath should be required by clap");
+    let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
+    let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
 
-        let balances = report::balance::balance(&input_journal);
+    let balances = report::balance::balance(&input_journal);
 
-        let mut account_names: Vec<&String> = balances.keys().collect();
-        account_names.sort();
+    let mut account_names: Vec<&String> = balances.keys().collect();
+    account_names.sort();
 
-        let mut table = prettytable::Table::new();
-        table.set_titles(row!["Account", "Balance"]);
+    let mut table = prettytable::Table::new();
+    table.set_titles(row!["Account", "Balance"]);
 
-        for account_name in account_names {
-            table.add_row(row![account_name.clone(), balances.get(account_name).unwrap().to_string()]);
-        }
+    for account_name in account_names {
+        table.add_row(row![account_name.clone(), balances.get(account_name).unwrap().to_string()]);
+    }
 
-        table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
-        table.printstd();
-    };
+    table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
+    table.printstd();
     Ok(())
 }
