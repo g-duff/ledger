@@ -1,7 +1,7 @@
 use std::fs;
 use std::error::Error;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Parser, Subcommand};
 use prettytable::format;
 use serde_json;
 

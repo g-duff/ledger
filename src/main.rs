@@ -1,7 +1,7 @@
 use std::error::Error;
 
 #[macro_use] extern crate prettytable;
-use clap::{Args, Parser, Subcommand};
+use clap::{Parser};
 
 mod cli;
 mod journal;
