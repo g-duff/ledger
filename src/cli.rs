@@ -17,31 +17,32 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    Balance(BalanceOptions),
+    Balance {
+        #[arg(short, long)]
+        filepath: Option<String>,
+    },
 }
 
-#[derive(Args)]
-pub struct BalanceOptions {
-    pub filename: Option<String>,
-}
+pub fn balance_handler(filepath_option: &Option<String>) -> Result<(), Box<dyn Error>> {
 
-pub fn balance_handler(journal_filepath: String) -> Result<(), Box<dyn Error>> {
-    let ledgerfile: String = fs::read_to_string(journal_filepath)?.parse()?;
-    let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
+    if let Some(filepath) = filepath_option.as_deref() {
+        let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
+        let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
 
-    let balances = report::balance::balance(&input_journal);
+        let balances = report::balance::balance(&input_journal);
 
-    let mut account_names: Vec<&String> = balances.keys().collect();
-    account_names.sort();
+        let mut account_names: Vec<&String> = balances.keys().collect();
+        account_names.sort();
 
-    let mut table = prettytable::Table::new();
-    table.set_titles(row!["Account", "Balance"]);
+        let mut table = prettytable::Table::new();
+        table.set_titles(row!["Account", "Balance"]);
 
-    for account_name in account_names {
-        table.add_row(row![account_name.clone(), balances.get(account_name).unwrap().to_string()]);
-    }
+        for account_name in account_names {
+            table.add_row(row![account_name.clone(), balances.get(account_name).unwrap().to_string()]);
+        }
 
-    table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
-    table.printstd();
+        table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
+        table.printstd();
+    };
     Ok(())
 }
