@@ -45,6 +45,8 @@ fn all_account_balances(sub_accounts_amounts: &HashMap<String, f64>) -> HashMap<
 
 #[cfg(test)]
 mod tests {
+    use chrono::{NaiveDate};
+
     use super::*;
     use crate::journal::{Entry, Transaction};
 
@@ -54,12 +56,14 @@ mod tests {
         let example_journal = Journal {
             transactions: vec![
                 Transaction {
+                    date: NaiveDate::from_ymd_opt(2000, 1, 1).unwrap(),
                     entries: vec![
                         Entry { account: String::from("assets:saving"), amount: -120_f64, },
                         Entry { account: String::from("assets:current"), amount: 120_f64, },
                     ]
                 },
                 Transaction {
+                    date: NaiveDate::from_ymd_opt(2000, 1, 1).unwrap(), 
                     entries: vec![
                         Entry { account: String::from("assets:current"), amount: -20_f64, },
                         Entry { account: String::from("expenses:groceries"), amount: 20_f64, },
