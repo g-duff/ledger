@@ -5,24 +5,10 @@ use chrono::{NaiveDate};
 use crate::journal::{Entry, Journal};
 
 pub fn balance(journal: &Journal, from_date: &NaiveDate) -> HashMap<String, f64> {
-    let entries = journal_to_entries(journal, from_date);
+    let entries = journal.entries_from_date(from_date);
     let sub_accounts_amounts = sub_account_balances(&entries);
     let all_accounts_amounts = all_account_balances(&sub_accounts_amounts);
     return all_accounts_amounts;
-}
-
-fn journal_to_entries<'a>(journal: &'a Journal, from_date: &NaiveDate) -> Vec<&'a Entry> {
-    let mut entries = Vec::new();
-    
-    for transaction in &journal.transactions {
-        if transaction.date >= *from_date {
-            for entry in &transaction.entries {
-                entries.push(entry);
-            }
-        }
-    }
-
-    return entries;
 }
 
 fn sub_account_balances(entries: &Vec<&Entry>) -> HashMap<String, f64> {
