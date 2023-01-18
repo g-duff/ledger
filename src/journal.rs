@@ -18,3 +18,17 @@ pub struct Entry {
     pub amount: f64,
 }
 
+impl Journal {
+    pub fn entries_from_date(&self, from_date: &NaiveDate) -> Vec<&Entry> {
+        let mut entries = Vec::new();
+        
+        for transaction in &self.transactions {
+            if transaction.date >= *from_date {
+                for entry in &transaction.entries {
+                    entries.push(entry);
+                }
+            }
+        }
+        return entries;
+    }
+}
