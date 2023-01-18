@@ -1,22 +1,38 @@
 use std::collections::HashMap;
 
-use crate::journal::{Journal};
+use chrono::{NaiveDate};
 
-pub fn balance(journal: &Journal) -> HashMap<String, f64> {
-    let sub_accounts_amounts = sub_account_balances(journal);
+use crate::journal::{Entry, Journal};
+
+pub fn balance(journal: &Journal, from_date: &NaiveDate) -> HashMap<String, f64> {
+    let entries = journal_to_entries(journal, from_date);
+    let sub_accounts_amounts = sub_account_balances(&entries);
     let all_accounts_amounts = all_account_balances(&sub_accounts_amounts);
     return all_accounts_amounts;
 }
 
-fn sub_account_balances(journal: &Journal) -> HashMap<String, f64> {
-    let mut sub_accounts_amounts = HashMap::new();
-
+fn journal_to_entries<'a>(journal: &'a Journal, from_date: &NaiveDate) -> Vec<&'a Entry> {
+    let mut entries = Vec::new();
+    
     for transaction in &journal.transactions {
-        for entry in &transaction.entries {
-            let sub_account_amount = sub_accounts_amounts.entry(entry.account.clone()).or_insert(0_f64);
-            *sub_account_amount += entry.amount;
+        if transaction.date >= *from_date {
+            for entry in &transaction.entries {
+                entries.push(entry);
+            }
         }
     }
+
+    return entries;
+}
+
+fn sub_account_balances(entries: &Vec<&Entry>) -> HashMap<String, f64> {
+    let mut sub_accounts_amounts = HashMap::new();
+
+    for entry in entries {
+        let sub_account_amount = sub_accounts_amounts.entry(entry.account.clone()).or_insert(0_f64);
+        *sub_account_amount += entry.amount;
+    }
+
     return sub_accounts_amounts;
 }
 
@@ -53,17 +69,25 @@ mod tests {
     #[test]
     fn test_balance() {
         // Given
+        let from_date = NaiveDate::from_ymd_opt(2000, 1, 10).unwrap();
         let example_journal = Journal {
             transactions: vec![
                 Transaction {
-                    date: NaiveDate::from_ymd_opt(2000, 1, 1).unwrap(),
+                    date: NaiveDate::from_ymd_opt(2000, 1, 9).unwrap(),
+                    entries: vec![
+                        Entry { account: String::from("assets:current"), amount: 10_f64, },
+                        Entry { account: String::from("expenses:travel"), amount: 10_f64, },
+                    ]
+                },
+                Transaction {
+                    date: NaiveDate::from_ymd_opt(2000, 1, 10).unwrap(),
                     entries: vec![
                         Entry { account: String::from("assets:saving"), amount: -120_f64, },
                         Entry { account: String::from("assets:current"), amount: 120_f64, },
                     ]
                 },
                 Transaction {
-                    date: NaiveDate::from_ymd_opt(2000, 1, 1).unwrap(), 
+                    date: NaiveDate::from_ymd_opt(2000, 1, 11).unwrap(), 
                     entries: vec![
                         Entry { account: String::from("assets:current"), amount: -20_f64, },
                         Entry { account: String::from("expenses:groceries"), amount: 20_f64, },
@@ -73,7 +97,7 @@ mod tests {
         };
 
         // When
-        let actual_balance = balance(&example_journal);
+        let actual_balance = balance(&example_journal, &from_date);
 
         // Then
         let expected_balance = HashMap::from([

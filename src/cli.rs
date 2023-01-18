@@ -1,6 +1,7 @@
 use std::fs;
 use std::error::Error;
 
+use chrono::{NaiveDate};
 use clap::{Parser, Subcommand};
 use prettytable::format;
 use serde_json;
@@ -29,7 +30,9 @@ pub fn balance_handler(filepath_option: &Option<String>) -> Result<(), Box<dyn E
     let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
     let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
 
-    let balances = report::balance::balance(&input_journal);
+    let from_date = NaiveDate::from_ymd_opt(2000, 1, 1).unwrap();
+
+    let balances = report::balance::balance(&input_journal, &from_date);
 
     let mut account_names: Vec<&String> = balances.keys().collect();
     account_names.sort();
