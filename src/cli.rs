@@ -19,19 +19,23 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     Balance {
-        #[arg(short, long, required = true)]
+        #[arg(short = 'p', long, required = true)]
         filepath: Option<String>,
+        #[arg(short = 'f', long)]
+        from_date: Option<NaiveDate>,
+        #[arg(short = 't', long)]
+        to_date: Option<NaiveDate>,
     },
 }
 
-pub fn balance_handler(filepath_option: &Option<String>) -> Result<(), Box<dyn Error>> {
+pub fn balance_handler(filepath_option: &Option<String>, from_date_option: &Option<NaiveDate>, to_date_option: &Option<NaiveDate>) -> Result<(), Box<dyn Error>> {
 
     let filepath = filepath_option.as_deref().expect("balance filepath should be required by clap");
     let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
     let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
 
-    let from_date = NaiveDate::from_ymd_opt(2000, 1, 1).unwrap();
-    let to_date = NaiveDate::from_ymd_opt(2100, 1, 1).unwrap();
+    let from_date = from_date_option.unwrap_or(NaiveDate::from_ymd_opt(2000, 1, 1).unwrap());
+    let to_date = to_date_option.unwrap_or(NaiveDate::from_ymd_opt(2200, 1, 1).unwrap());
 
     let balances = report::balance::balance(&input_journal, &from_date, &to_date);
 
