@@ -31,8 +31,9 @@ pub fn balance_handler(filepath_option: &Option<String>) -> Result<(), Box<dyn E
     let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
 
     let from_date = NaiveDate::from_ymd_opt(2000, 1, 1).unwrap();
+    let to_date = NaiveDate::from_ymd_opt(2100, 1, 1).unwrap();
 
-    let balances = report::balance::balance(&input_journal, &from_date);
+    let balances = report::balance::balance(&input_journal, &from_date, &to_date);
 
     let mut account_names: Vec<&String> = balances.keys().collect();
     account_names.sort();
