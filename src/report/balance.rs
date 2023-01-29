@@ -4,8 +4,8 @@ use chrono::{NaiveDate};
 
 use crate::journal::{Entry, Journal};
 
-pub fn balance(journal: &Journal, from_date: &NaiveDate) -> HashMap<String, f64> {
-    let entries = journal.entries_from_date(from_date);
+pub fn balance(journal: &Journal, from_date: &NaiveDate, to_date: &NaiveDate) -> HashMap<String, f64> {
+    let entries = journal.entries_between_dates(from_date, to_date);
     let sub_accounts_amounts = sub_account_balances(&entries);
     let all_accounts_amounts = all_account_balances(&sub_accounts_amounts);
     return all_accounts_amounts;
@@ -56,6 +56,7 @@ mod tests {
     fn test_balance() {
         // Given
         let from_date = NaiveDate::from_ymd_opt(2000, 1, 10).unwrap();
+        let to_date = NaiveDate::from_ymd_opt(2000, 1, 11).unwrap();
         let example_journal = Journal {
             transactions: vec![
                 Transaction {
@@ -79,11 +80,18 @@ mod tests {
                         Entry { account: String::from("expenses:groceries"), amount: 20_f64, },
                     ]
                 },
+                Transaction {
+                    date: NaiveDate::from_ymd_opt(2000, 1, 12).unwrap(), 
+                    entries: vec![
+                        Entry { account: String::from("assets:current"), amount: -30_f64, },
+                        Entry { account: String::from("expenses:clothes"), amount: 30_f64, },
+                    ]
+                },
             ],
         };
 
         // When
-        let actual_balance = balance(&example_journal, &from_date);
+        let actual_balance = balance(&example_journal, &from_date, &to_date);
 
         // Then
         let expected_balance = HashMap::from([
