@@ -1,7 +1,7 @@
-use std::fs;
 use std::error::Error;
+use std::fs;
 
-use chrono::{NaiveDate};
+use chrono::NaiveDate;
 use clap::{Parser, Subcommand};
 use prettytable::format;
 use serde_json;
@@ -28,9 +28,14 @@ pub enum Commands {
     },
 }
 
-pub fn balance_handler(filepath_option: &Option<String>, from_date_option: &Option<NaiveDate>, to_date_option: &Option<NaiveDate>) -> Result<(), Box<dyn Error>> {
-
-    let filepath = filepath_option.as_deref().expect("balance filepath should be required by clap");
+pub fn balance_handler(
+    filepath_option: &Option<String>,
+    from_date_option: &Option<NaiveDate>,
+    to_date_option: &Option<NaiveDate>,
+) -> Result<(), Box<dyn Error>> {
+    let filepath = filepath_option
+        .as_deref()
+        .expect("balance filepath should be required by clap");
     let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
     let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
 
@@ -46,7 +51,10 @@ pub fn balance_handler(filepath_option: &Option<String>, from_date_option: &Opti
     table.set_titles(row!["Account", "Balance"]);
 
     for account_name in account_names {
-        table.add_row(row![account_name.clone(), balances.get(account_name).unwrap().to_string()]);
+        table.add_row(row![
+            account_name.clone(),
+            balances.get(account_name).unwrap().to_string()
+        ]);
     }
 
     table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);

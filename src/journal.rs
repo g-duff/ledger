@@ -1,4 +1,4 @@
-use chrono::{NaiveDate};
+use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -21,7 +21,7 @@ pub struct Entry {
 impl Journal {
     pub fn entries_between_dates(&self, from_date: &NaiveDate, to_date: &NaiveDate) -> Vec<&Entry> {
         let mut entries = Vec::new();
-        
+
         for transaction in &self.transactions {
             if transaction.date >= *from_date && transaction.date <= *to_date {
                 for entry in &transaction.entries {
