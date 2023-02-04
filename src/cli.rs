@@ -40,6 +40,8 @@ pub fn balance_handler(
     let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
     let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
 
+    input_journal.validate();
+
     let from_date = from_date_option.unwrap_or(NaiveDate::from_ymd_opt(2000, 1, 1).unwrap());
     let to_date = to_date_option.unwrap_or(NaiveDate::from_ymd_opt(2200, 1, 1).unwrap());
 
