@@ -45,5 +45,31 @@ impl Journal {
             }
         }
     }
+}
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[should_panic(expected = "Transaction on 2000-01-09 is unbalanced")]
+    fn test_balance() {
+        // Given
+        let example_journal = Journal {
+            transactions: vec![
+                Transaction {
+                    date: NaiveDate::from_ymd_opt(2000, 1, 9).unwrap(),
+                    entries: vec![
+                        Entry {
+                            account: String::from("assets:current"),
+                            amount: 10_f64,
+                        }
+                    ],
+                },
+            ],
+        };
+
+        // When/Then
+        example_journal.validate();
+    }
 }
