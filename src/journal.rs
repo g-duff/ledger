@@ -31,4 +31,19 @@ impl Journal {
         }
         return entries;
     }
+
+    pub fn validate(&self) {
+
+        let mut balance: f64;
+        for transaction in &self.transactions {
+            balance = 0_f64;
+            for entry in &transaction.entries {
+                balance += entry.amount;
+            }
+            if (balance * 100_f64).round() != 0_f64 {
+                panic!("Transaction on {:?} is unbalanced", transaction.date);
+            }
+        }
+    }
+
 }
