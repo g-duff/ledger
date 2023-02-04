@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::error::Error;
 use std::fs;
 
@@ -44,6 +45,11 @@ pub fn balance_handler(
 
     let balances = report::balance::balance(&input_journal, &from_date, &to_date);
 
+    display_balances(balances);
+    Ok(())
+}
+
+fn display_balances(balances: HashMap<String, f64>) {
     let mut account_names: Vec<&String> = balances.keys().collect();
     account_names.sort();
 
@@ -59,5 +65,4 @@ pub fn balance_handler(
 
     table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
     table.printstd();
-    Ok(())
 }
