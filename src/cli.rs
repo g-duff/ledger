@@ -33,12 +33,8 @@ pub fn balance_handler(
     filepath_option: &Option<String>,
     from_date_option: &Option<NaiveDate>,
     to_date_option: &Option<NaiveDate>,
-) -> Result<(), Box<dyn Error>> {
-    let filepath = filepath_option
-        .as_deref()
-        .expect("balance filepath should be required by clap");
-    let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
-    let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
+) {
+    let input_journal: journal::Journal = load_journal(filepath_option).unwrap();
 
     input_journal.validate();
 
@@ -48,7 +44,13 @@ pub fn balance_handler(
     let balances = report::balance::balance(&input_journal, &from_date, &to_date);
 
     display_balances(balances);
-    Ok(())
+}
+
+fn load_journal(filepath_option: &Option<String>) -> Result<journal::Journal, Box<dyn Error>> {
+    let filepath = filepath_option.as_deref().unwrap();
+    let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
+    let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
+    Ok(input_journal)
 }
 
 fn display_balances(balances: HashMap<String, f64>) {
