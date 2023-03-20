@@ -2,7 +2,6 @@
 extern crate prettytable;
 use clap::Command;
 
-mod cli;
 mod commands;
 mod journal;
 mod report;
@@ -13,7 +12,7 @@ fn main() {
         .get_matches();
 
     match user_input.subcommand() {
-        Some(("balance", report_args)) => cli::balance_handler(report_args),
+        Some(("balance", report_args)) => commands::balance::balance_handler(report_args),
         _ => println!("no command given"),
     }
 }
