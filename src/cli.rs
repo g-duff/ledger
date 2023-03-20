@@ -3,51 +3,28 @@ use std::error::Error;
 use std::fs;
 
 use chrono::NaiveDate;
-use clap::{Parser, Subcommand};
+use clap::ArgMatches;
 use prettytable::format;
 use serde_json;
 
 use crate::journal;
 use crate::report;
 
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)] // Read from `Cargo.toml`
-pub struct Cli {
-    #[command(subcommand)]
-    pub command: Commands,
-}
-
-#[derive(Subcommand)]
-pub enum Commands {
-    Balance {
-        #[arg(short = 'p', long, required = true)]
-        filepath: Option<String>,
-        #[arg(short = 'f', long)]
-        from_date: Option<NaiveDate>,
-        #[arg(short = 't', long)]
-        to_date: Option<NaiveDate>,
-    },
-}
-
-pub fn balance_handler(
-    filepath_option: &Option<String>,
-    from_date_option: &Option<NaiveDate>,
-    to_date_option: &Option<NaiveDate>,
-) {
+pub fn balance_handler(report_args: &ArgMatches) {
+    let filepath_option = report_args.get_one::<String>("filepath").expect("required");
     let input_journal: journal::Journal = load_journal(filepath_option).unwrap();
 
     input_journal.validate();
 
-    let from_date = from_date_option.unwrap_or(NaiveDate::from_ymd_opt(2000, 1, 1).unwrap());
-    let to_date = to_date_option.unwrap_or(NaiveDate::from_ymd_opt(2200, 1, 1).unwrap());
+    let from_date = NaiveDate::from_ymd_opt(2000, 1, 1).unwrap();
+    let to_date = NaiveDate::from_ymd_opt(2200, 1, 1).unwrap();
 
     let balances = report::balance::balance(&input_journal, &from_date, &to_date);
 
     display_balances(balances);
 }
 
-fn load_journal(filepath_option: &Option<String>) -> Result<journal::Journal, Box<dyn Error>> {
-    let filepath = filepath_option.as_deref().unwrap();
+fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
     let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
     let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
     Ok(input_journal)
