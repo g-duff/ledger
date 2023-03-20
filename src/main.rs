@@ -1,19 +1,19 @@
 #[macro_use]
 extern crate prettytable;
-use clap::Parser;
+use clap::Command;
 
 mod cli;
+mod commands;
 mod journal;
 mod report;
 
 fn main() {
-    let user_input = cli::Cli::parse();
+    let user_input = Command::new("ledger")
+        .subcommand(commands::balance::balance_command())
+        .get_matches();
 
-    match &user_input.command {
-        cli::Commands::Balance {
-            filepath,
-            from_date,
-            to_date,
-        } => cli::balance_handler(filepath, from_date, to_date),
+    match user_input.subcommand() {
+        Some(("balance", report_args)) => cli::balance_handler(report_args),
+        _ => println!("no command given"),
     }
 }
