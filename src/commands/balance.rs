@@ -14,15 +14,15 @@ pub fn balance_command() -> Command {
     Command::new("balance")
         .arg(Arg::new("filepath").short('p').long("filepath"))
         .arg(
-            Arg::new("from_date")
+            Arg::new("from-date")
                 .short('f')
-                .long("from_date")
+                .long("from-date")
                 .value_parser(value_parser!(NaiveDate)),
         )
         .arg(
-            Arg::new("to_date")
+            Arg::new("to-date")
                 .short('t')
-                .long("to_date")
+                .long("to-date")
                 .value_parser(value_parser!(NaiveDate)),
         )
 }
@@ -33,8 +33,8 @@ pub fn balance_handler(report_args: &ArgMatches) {
 
     input_journal.validate();
 
-    let from_date = NaiveDate::from_ymd_opt(2000, 1, 1).unwrap();
-    let to_date = NaiveDate::from_ymd_opt(2200, 1, 1).unwrap();
+    let from_date = report_args.get_one::<NaiveDate>("from-date").unwrap_or(&NaiveDate::MIN);
+    let to_date = report_args.get_one::<NaiveDate>("to-date").unwrap_or(&NaiveDate::MAX);
 
     let balances = report::balance::balance(&input_journal, &from_date, &to_date);
 
