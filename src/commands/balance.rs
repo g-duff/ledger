@@ -28,8 +28,8 @@ pub fn balance_command() -> Command {
 }
 
 pub fn balance_handler(report_args: &ArgMatches) {
-    let filepath_option = report_args.get_one::<String>("filepath").expect("required");
-    let input_journal: journal::Journal = load_journal(filepath_option).unwrap();
+    let filepath = report_args.get_one::<String>("filepath").expect("required");
+    let input_journal: journal::Journal = load_journal(filepath).unwrap();
 
     input_journal.validate();
 
