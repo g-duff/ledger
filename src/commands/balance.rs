@@ -3,38 +3,46 @@ use std::error::Error;
 use std::fs;
 
 use chrono::NaiveDate;
-use clap:: { ArgMatches, Arg, Command, value_parser };
+use clap::{value_parser, Arg, ArgMatches, Command};
 use prettytable::format;
 use serde_json;
 
 use crate::journal;
 use crate::report;
 
+const FILEPATH: &str = "filepath";
+const FROM_DATE: &str = "from-date";
+const TO_DATE: &str = "to-date";
+
 pub fn balance_command() -> Command {
     Command::new("balance")
-        .arg(Arg::new("filepath").short('p').long("filepath"))
+        .arg(Arg::new(FILEPATH).short('p').long(FILEPATH))
         .arg(
-            Arg::new("from-date")
+            Arg::new(FROM_DATE)
                 .short('f')
-                .long("from-date")
+                .long(FROM_DATE)
                 .value_parser(value_parser!(NaiveDate)),
         )
         .arg(
-            Arg::new("to-date")
+            Arg::new(TO_DATE)
                 .short('t')
-                .long("to-date")
+                .long(TO_DATE)
                 .value_parser(value_parser!(NaiveDate)),
         )
 }
 
 pub fn balance_handler(report_args: &ArgMatches) {
-    let filepath = report_args.get_one::<String>("filepath").expect("required");
+    let filepath = report_args.get_one::<String>(FILEPATH).expect("required");
     let input_journal: journal::Journal = load_journal(filepath).unwrap();
 
     input_journal.validate();
 
-    let from_date = report_args.get_one::<NaiveDate>("from-date").unwrap_or(&NaiveDate::MIN);
-    let to_date = report_args.get_one::<NaiveDate>("to-date").unwrap_or(&NaiveDate::MAX);
+    let from_date = report_args
+        .get_one::<NaiveDate>(FROM_DATE)
+        .unwrap_or(&NaiveDate::MIN);
+    let to_date = report_args
+        .get_one::<NaiveDate>(TO_DATE)
+        .unwrap_or(&NaiveDate::MAX);
 
     let balances = report::balance::balance(&input_journal, &from_date, &to_date);
 
