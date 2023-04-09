@@ -1,19 +1,11 @@
 #[macro_use]
 extern crate prettytable;
-use clap::Parser;
 
 mod cli;
+mod commands;
 mod journal;
 mod report;
 
 fn main() {
-    let user_input = cli::Cli::parse();
-
-    match &user_input.command {
-        cli::Commands::Balance {
-            filepath,
-            from_date,
-            to_date,
-        } => cli::balance_handler(filepath, from_date, to_date),
-    }
+    cli::main();
 }
