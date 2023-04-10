@@ -14,7 +14,8 @@ to_json() {
 		printf "\t\"date\": \"%s\",\n",$1
 		printf "\t\"description\": \"%s\",\n",$2
 		print "\t\"entries\": ["
-		printf "\t\t{\"account\": \"%s\", \"amount\": %.2f}\n",account,amount
+		printf "\t\t{\"account\": \"%s\", \"amount\": %.2f},\n",account,amount
+		printf "\t\t{\"account\": \"__\", \"amount\": %.2f}\n",(-1*amount)
 		print "\t]\n},"
 	}'
 }
