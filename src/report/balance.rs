@@ -11,8 +11,7 @@ pub fn balance(
 ) -> HashMap<String, f64> {
     let entries = journal.entries_between_dates(from_date, to_date);
     let sub_accounts_amounts = sub_account_balances(&entries);
-    let all_accounts_amounts = all_account_balances(&sub_accounts_amounts);
-    all_accounts_amounts
+    all_account_balances(&sub_accounts_amounts)
 }
 
 fn sub_account_balances(entries: &Vec<&Entry>) -> HashMap<String, f64> {
