@@ -11,8 +11,7 @@ pub fn balance(
 ) -> HashMap<String, f64> {
     let entries = journal.entries_between_dates(from_date, to_date);
     let sub_accounts_amounts = sub_account_balances(&entries);
-    let all_accounts_amounts = all_account_balances(&sub_accounts_amounts);
-    return all_accounts_amounts;
+    all_account_balances(&sub_accounts_amounts)
 }
 
 fn sub_account_balances(entries: &Vec<&Entry>) -> HashMap<String, f64> {
@@ -25,7 +24,7 @@ fn sub_account_balances(entries: &Vec<&Entry>) -> HashMap<String, f64> {
         *sub_account_amount += entry.amount;
     }
 
-    return sub_accounts_amounts;
+    sub_accounts_amounts
 }
 
 fn all_account_balances(sub_accounts_amounts: &HashMap<String, f64>) -> HashMap<String, f64> {
@@ -34,9 +33,9 @@ fn all_account_balances(sub_accounts_amounts: &HashMap<String, f64>) -> HashMap<
     for sub_account_name in sub_accounts_amounts.keys() {
         let sub_account_amount = sub_accounts_amounts.get(sub_account_name).unwrap();
 
-        let mut account_name_components = sub_account_name.split(":");
+        let mut account_name_components = sub_account_name.split(':');
+        let mut super_account_name = account_name_components.next().unwrap().to_string();
 
-        let mut super_account_name = account_name_components.next().unwrap().clone().to_string();
         let super_account_amount = all_accounts_amounts
             .entry(super_account_name.clone())
             .or_insert(0_f64);
@@ -52,7 +51,7 @@ fn all_account_balances(sub_accounts_amounts: &HashMap<String, f64>) -> HashMap<
             *super_account_amount += sub_account_amount;
         }
     }
-    return all_accounts_amounts;
+    all_accounts_amounts
 }
 
 #[cfg(test)]
