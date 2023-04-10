@@ -29,7 +29,7 @@ impl Journal {
                 }
             }
         }
-        return entries;
+        entries
     }
 
     pub fn validate(&self) {
