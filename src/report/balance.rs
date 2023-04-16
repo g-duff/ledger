@@ -6,14 +6,15 @@ use crate::journal::{Entry, Journal};
 
 pub fn balance(
     journal: &Journal,
+    depth: &usize,
     from_date: &NaiveDate,
     to_date: &NaiveDate,
 ) -> HashMap<String, f64> {
     let entries = journal.entries_between_dates(from_date, to_date);
-    account_balances(&entries)
+    account_balances(&entries, depth)
 }
 
-fn account_balances(entries: &Vec<&Entry>) -> HashMap<String, f64> {
+fn account_balances(entries: &Vec<&Entry>, depth: &usize) -> HashMap<String, f64> {
     let mut accounts_amounts = HashMap::new();
     let mut account_name = String::new();
 

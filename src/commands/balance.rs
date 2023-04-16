@@ -53,7 +53,7 @@ pub fn balance_handler(report_args: &ArgMatches) {
         .get_one::<NaiveDate>(TO_DATE)
         .unwrap_or(&NaiveDate::MAX);
 
-    let balances = report::balance::balance(&input_journal, from_date, to_date);
+    let balances = report::balance::balance(&input_journal, depth, from_date, to_date);
 
     display_balances(balances);
 }
