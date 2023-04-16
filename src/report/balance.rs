@@ -6,19 +6,20 @@ use crate::journal::{Entry, Journal};
 
 pub fn balance(
     journal: &Journal,
+    depth: &usize,
     from_date: &NaiveDate,
     to_date: &NaiveDate,
 ) -> HashMap<String, f64> {
     let entries = journal.entries_between_dates(from_date, to_date);
-    account_balances(&entries)
+    account_balances(&entries, depth)
 }
 
-fn account_balances(entries: &Vec<&Entry>) -> HashMap<String, f64> {
+fn account_balances(entries: &Vec<&Entry>, depth: &usize) -> HashMap<String, f64> {
     let mut accounts_amounts = HashMap::new();
     let mut account_name = String::new();
 
     for entry in entries {
-        for account_name_component in entry.account.split(':') {
+        for account_name_component in entry.account.split(':').take(*depth) {
             account_name.push_str(account_name_component);
 
             let super_account_amount = accounts_amounts
@@ -80,11 +81,24 @@ mod tests {
                     entries: vec![
                         Entry {
                             account: String::from("assets:current"),
-                            amount: -20_f64,
+                            amount: -10_f64,
                         },
                         Entry {
-                            account: String::from("expenses:groceries"),
-                            amount: 20_f64,
+                            account: String::from("expenses:groceries:vegetables"),
+                            amount: 10_f64,
+                        },
+                    ],
+                },
+                Transaction {
+                    date: NaiveDate::from_ymd_opt(2000, 1, 11).unwrap(),
+                    entries: vec![
+                        Entry {
+                            account: String::from("assets:current"),
+                            amount: -10_f64,
+                        },
+                        Entry {
+                            account: String::from("expenses:groceries:fruit"),
+                            amount: 10_f64,
                         },
                     ],
                 },
@@ -105,7 +119,7 @@ mod tests {
         };
 
         // When
-        let actual_balance = balance(&example_journal, &from_date, &to_date);
+        let actual_balance = balance(&example_journal, &2, &from_date, &to_date);
 
         // Then
         let expected_balance = HashMap::from([
