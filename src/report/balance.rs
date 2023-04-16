@@ -15,26 +15,21 @@ pub fn balance(
 
 fn account_balances(entries: &Vec<&Entry>) -> HashMap<String, f64> {
     let mut accounts_amounts = HashMap::new();
+    let mut account_name = String::new();
 
     for entry in entries {
-
-        let mut account_name_components = entry.account.split(':');
-        let mut account_name = account_name_components.next().unwrap().to_string();
-
-        let sub_account_amount = accounts_amounts
-            .entry(account_name.clone())
-            .or_insert(0_f64);
-        *sub_account_amount += entry.amount;
-
-        for account_name_component in account_name_components {
-            account_name.push(':');
+        for account_name_component in entry.account.split(':') {
             account_name.push_str(account_name_component);
 
             let super_account_amount = accounts_amounts
                 .entry(account_name.clone())
                 .or_insert(0_f64);
             *super_account_amount += entry.amount;
+
+            account_name.push(':');
         }
+
+        account_name = String::default();
     }
 
     accounts_amounts
