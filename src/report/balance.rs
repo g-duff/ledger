@@ -81,11 +81,24 @@ mod tests {
                     entries: vec![
                         Entry {
                             account: String::from("assets:current"),
-                            amount: -20_f64,
+                            amount: -10_f64,
                         },
                         Entry {
-                            account: String::from("expenses:groceries"),
-                            amount: 20_f64,
+                            account: String::from("expenses:groceries:vegetables"),
+                            amount: 10_f64,
+                        },
+                    ],
+                },
+                Transaction {
+                    date: NaiveDate::from_ymd_opt(2000, 1, 11).unwrap(),
+                    entries: vec![
+                        Entry {
+                            account: String::from("assets:current"),
+                            amount: -10_f64,
+                        },
+                        Entry {
+                            account: String::from("expenses:groceries:fruit"),
+                            amount: 10_f64,
                         },
                     ],
                 },
@@ -106,7 +119,7 @@ mod tests {
         };
 
         // When
-        let actual_balance = balance(&example_journal, &from_date, &to_date);
+        let actual_balance = balance(&example_journal, &2, &from_date, &to_date);
 
         // Then
         let expected_balance = HashMap::from([
