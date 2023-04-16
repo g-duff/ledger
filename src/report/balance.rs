@@ -19,7 +19,7 @@ fn account_balances(entries: &Vec<&Entry>, depth: &usize) -> HashMap<String, f64
     let mut account_name = String::new();
 
     for entry in entries {
-        for account_name_component in entry.account.split(':') {
+        for account_name_component in entry.account.split(':').take(*depth) {
             account_name.push_str(account_name_component);
 
             let super_account_amount = accounts_amounts
