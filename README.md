@@ -18,6 +18,10 @@ Go look at them first! This project plays in the sandbox of plain text accountin
 * Learn some accounting.
 * Appreciate great work already done in this area.
 
+## Not Aims
+
+* Release to Cargo.
+
 ## License
 
 * [MIT](./LICENSE).
