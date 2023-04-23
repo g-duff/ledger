@@ -5,6 +5,7 @@ use std::fs;
 use chrono::NaiveDate;
 use clap::{value_parser, Arg, ArgMatches, Command};
 use prettytable::format;
+use rust_decimal::prelude::Decimal;
 use serde_json;
 
 use crate::journal;
@@ -64,7 +65,7 @@ fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
     Ok(input_journal)
 }
 
-fn display_balances(balances: HashMap<String, f64>) {
+fn display_balances(balances: HashMap<String, Decimal>) {
     let mut account_names: Vec<&String> = balances.keys().collect();
     account_names.sort();
 
@@ -74,7 +75,7 @@ fn display_balances(balances: HashMap<String, f64>) {
     for account_name in account_names {
         table.add_row(row![
             account_name.clone(),
-            balances.get(account_name).unwrap().to_string()
+            r -> format!("{:.2}", balances.get(account_name).unwrap())
         ]);
     }
 
