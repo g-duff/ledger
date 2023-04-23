@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use chrono::NaiveDate;
+use rust_decimal::prelude::Decimal;
 
 use crate::journal::{Entry, Journal};
 
@@ -9,12 +10,12 @@ pub fn balance(
     depth: &usize,
     from_date: &NaiveDate,
     to_date: &NaiveDate,
-) -> HashMap<String, f64> {
+) -> HashMap<String, Decimal> {
     let entries = journal.entries_between_dates(from_date, to_date);
     account_balances(&entries, depth)
 }
 
-fn account_balances(entries: &Vec<&Entry>, depth: &usize) -> HashMap<String, f64> {
+fn account_balances(entries: &Vec<&Entry>, depth: &usize) -> HashMap<String, Decimal> {
     let mut accounts_amounts = HashMap::new();
     let mut account_name = String::new();
 
@@ -24,7 +25,7 @@ fn account_balances(entries: &Vec<&Entry>, depth: &usize) -> HashMap<String, f64
 
             let super_account_amount = accounts_amounts
                 .entry(account_name.clone())
-                .or_insert(0_f64);
+                .or_insert(Decimal::ZERO);
             *super_account_amount += entry.amount;
 
             account_name.push(':');
@@ -55,11 +56,11 @@ mod tests {
                     entries: vec![
                         Entry {
                             account: String::from("assets:current"),
-                            amount: 10_f64,
+                            amount: Decimal::new(10, 0),
                         },
                         Entry {
                             account: String::from("expenses:travel"),
-                            amount: 10_f64,
+                            amount: Decimal::new(10, 0),
                         },
                     ],
                 },
@@ -68,11 +69,11 @@ mod tests {
                     entries: vec![
                         Entry {
                             account: String::from("assets:saving"),
-                            amount: -120_f64,
+                            amount: Decimal::new(-120, 0),
                         },
                         Entry {
                             account: String::from("assets:current"),
-                            amount: 120_f64,
+                            amount: Decimal::new(120, 0),
                         },
                     ],
                 },
@@ -81,11 +82,11 @@ mod tests {
                     entries: vec![
                         Entry {
                             account: String::from("assets:current"),
-                            amount: -10_f64,
+                            amount: Decimal::new(-10, 0),
                         },
                         Entry {
                             account: String::from("expenses:groceries:vegetables"),
-                            amount: 10_f64,
+                            amount: Decimal::new(10, 0),
                         },
                     ],
                 },
@@ -94,11 +95,11 @@ mod tests {
                     entries: vec![
                         Entry {
                             account: String::from("assets:current"),
-                            amount: -10_f64,
+                            amount: Decimal::new(-10, 0),
                         },
                         Entry {
                             account: String::from("expenses:groceries:fruit"),
-                            amount: 10_f64,
+                            amount: Decimal::new(10, 0),
                         },
                     ],
                 },
@@ -107,11 +108,11 @@ mod tests {
                     entries: vec![
                         Entry {
                             account: String::from("assets:current"),
-                            amount: -30_f64,
+                            amount: Decimal::new(-30, 0),
                         },
                         Entry {
                             account: String::from("expenses:clothes"),
-                            amount: 30_f64,
+                            amount: Decimal::new(30, 0),
                         },
                     ],
                 },
@@ -123,11 +124,11 @@ mod tests {
 
         // Then
         let expected_balance = HashMap::from([
-            (String::from("assets"), -20_f64),
-            (String::from("assets:saving"), -120_f64),
-            (String::from("assets:current"), 100_f64),
-            (String::from("expenses"), 20_f64),
-            (String::from("expenses:groceries"), 20_f64),
+            (String::from("assets"), Decimal::new(-20, 0)),
+            (String::from("assets:saving"), Decimal::new(-120, 0)),
+            (String::from("assets:current"), Decimal::new(100, 0)),
+            (String::from("expenses"), Decimal::new(20, 0)),
+            (String::from("expenses:groceries"), Decimal::new(20, 0)),
         ]);
         assert_eq!(expected_balance, actual_balance);
     }
