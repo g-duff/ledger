@@ -75,7 +75,7 @@ fn display_balances(balances: HashMap<String, Decimal>) {
     for account_name in account_names {
         table.add_row(row![
             account_name.clone(),
-            balances.get(account_name).unwrap().to_string()
+            r -> format!("{:.2}", balances.get(account_name).unwrap())
         ]);
     }
 
