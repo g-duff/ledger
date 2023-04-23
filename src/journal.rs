@@ -1,4 +1,5 @@
 use chrono::NaiveDate;
+use rust_decimal::prelude::Decimal;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -15,7 +16,7 @@ pub struct Transaction {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Entry {
     pub account: String,
-    pub amount: f64,
+    pub amount: Decimal,
 }
 
 impl Journal {
@@ -34,13 +35,13 @@ impl Journal {
 
     pub fn validate(&self) {
 
-        let mut balance: f64;
+        let mut balance: Decimal;
         for transaction in &self.transactions {
-            balance = 0_f64;
+            balance = Decimal::ZERO;
             for entry in &transaction.entries {
                 balance += entry.amount;
             }
-            if (balance * 100_f64).round() != 0_f64 {
+            if !balance.is_zero() {
                 panic!("Transaction on {:?} is unbalanced", transaction.date);
             }
         }
@@ -62,7 +63,7 @@ mod tests {
                     entries: vec![
                         Entry {
                             account: String::from("assets:current"),
-                            amount: 10_f64,
+                            amount: Decimal::new(10, 0),
                         }
                     ],
                 },
