@@ -5,6 +5,7 @@ filename_to_accountname() {
 }
 
 process_bank_statements() {
+	# Use: process_bank_statements bank-name csv-directory
 	for filename in $2/*_$1_*.csv; do
 		[ -f $filename ] && ./utils/awk/from-$1.awk \
 			-v account=$(filename_to_accountname $filename) \
