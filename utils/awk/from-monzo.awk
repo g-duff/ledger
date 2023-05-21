@@ -1,14 +1,17 @@
 #! /usr/bin/awk -f
 # ./monzo-to-json.awk -v account='account:name' /path/to/account-name.csv
 
-BEGIN { FS="," }
+BEGIN { FS=","; OFS="," }
 { if (NR>1)
 	{
-		date = $2;
 		amount = $8;
+
+		split($2, day_month_year, "/");
+		date = day_month_year[3]"-"day_month_year[2]"-"day_month_year[1];
+
 		description = $5;
 		gsub(/\"/, "", description);
 		
-		printf "%s,%s,%s,%s\n", date, account, amount, description;
+		print date, account, amount, description;
 	}
 }
