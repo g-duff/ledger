@@ -8,11 +8,11 @@ BEGIN { FS="," }
 	amount = $3;
 	description = $4;
 
-	print "{";
-	printf "\t\"date\": \"%s\",\n",date;
-	printf "\t\"description\": \"%s\",\n",description;
-	print "\t\"entries\": [";
-	printf "\t\t{\"account\": \"%s\", \"amount\": %.2f},\n",account,amount;
-	printf "\t\t{\"account\": \"__\", \"amount\": %.2f}\n",(-1*amount);
-	print "\t]\n},";
+	printf "{\n"\
+		"\t\"date\": \"%s\",\n"\
+		"\t\"description\": \"%s\",\n"\
+		"\t\"entries\": [\n"\
+		"\t\t{\"account\": \"%s\", \"amount\": %.2f},\n"\
+		"\t\t{\"account\": \"__\", \"amount\": %.2f}\n"\
+		"\t]\n},\n",date,description,account,amount,(-1*amount)
 }
