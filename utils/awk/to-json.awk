@@ -3,9 +3,9 @@
 
 BEGIN { FS="," }
 {
-	date = $1;
 	account = $2;
 	amount = $3;
+	date = $1;
 	description = $4;
 
 	printf "{\n"\
