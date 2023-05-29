@@ -1,5 +1,5 @@
 #! /usr/bin/awk -f
-# ./tsb-to-json.awk -v account='account:name' /path/to/account-name.csv
+# ./tsb-to-json.awk -v account='account name' /path/to/account-name.csv
 
 BEGIN { FS="," }
 {

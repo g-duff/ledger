@@ -1,5 +1,5 @@
 #! /usr/bin/awk -f
-# ./from-hsbc.awk -v account='account:name' /path/to/account-name.csv
+# ./from-hsbc.awk -v account='account name' /path/to/account-name.csv
 
 BEGIN { FS=","; OFS=","}
 {

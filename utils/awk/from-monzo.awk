@@ -1,5 +1,5 @@
 #! /usr/bin/awk -f
-# ./monzo-to-json.awk -v account='account:name' /path/to/account-name.csv
+# ./monzo-to-json.awk -v account='account name' /path/to/account-name.csv
 
 BEGIN { FS=","; OFS="," }
 { if (NR>1)
