@@ -6,6 +6,7 @@ use chrono::NaiveDate;
 use clap::{value_parser, Arg, ArgMatches, Command};
 use prettytable::format;
 use rust_decimal::prelude::Decimal;
+use serde::Serialize;
 use serde_json;
 
 use crate::journal;
@@ -15,6 +16,7 @@ const FILEPATH: &str = "filepath";
 const DEPTH: &str = "depth";
 const FROM_DATE: &str = "from-date";
 const TO_DATE: &str = "to-date";
+const OUTPUT_FORMAT: &str = "output-format";
 
 pub fn balance_command() -> Command {
     Command::new("balance")
@@ -37,6 +39,13 @@ pub fn balance_command() -> Command {
                 .long(TO_DATE)
                 .value_parser(value_parser!(NaiveDate)),
         )
+        .arg(
+            Arg::new(OUTPUT_FORMAT)
+                .short('o')
+                .long(OUTPUT_FORMAT)
+                .value_parser(["table", "json"])
+                .default_value("table"),
+        )
 }
 
 pub fn balance_handler(report_args: &ArgMatches) {
@@ -56,7 +65,15 @@ pub fn balance_handler(report_args: &ArgMatches) {
 
     let balances = report::balance::balance(&input_journal, depth, from_date, to_date);
 
-    display_balances(balances);
+    match report_args
+        .get_one::<String>(OUTPUT_FORMAT)
+        .expect("Default is table")
+        .as_str()
+    {
+        "json" => display_json(&balances),
+        "table" => display_table(&balances),
+        _ => unreachable!(),
+    }
 }
 
 fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
@@ -65,7 +82,30 @@ fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
     Ok(input_journal)
 }
 
-fn display_balances(balances: HashMap<String, Decimal>) {
+fn display_json(balances: &HashMap<String, Decimal>) {
+    #[derive(Serialize)]
+    struct Account {
+        account: String,
+        balance: Decimal,
+    }
+
+    let mut account_names: Vec<&String> = balances.keys().collect();
+    account_names.sort();
+    let accounts: Vec<Account> = account_names
+        .iter()
+        .map(|account_name| {
+            let name = account_name.to_string();
+            Account {
+                balance: *balances.get(&name).unwrap(),
+                account: name,
+            }
+        })
+        .collect();
+
+    println!("{}", serde_json::to_string_pretty(&accounts).unwrap())
+}
+
+fn display_table(balances: &HashMap<String, Decimal>) {
     let mut account_names: Vec<&String> = balances.keys().collect();
     account_names.sort();
 
