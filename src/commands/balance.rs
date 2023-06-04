@@ -65,8 +65,15 @@ pub fn balance_handler(report_args: &ArgMatches) {
 
     let balances = report::balance::balance(&input_journal, depth, from_date, to_date);
 
-    display_table(&balances);
-    display_json(&balances);
+    match report_args
+        .get_one::<String>(OUTPUT_FORMAT)
+        .expect("Default is table")
+        .as_str()
+    {
+        "json" => display_json(&balances),
+        "table" => display_table(&balances),
+        _ => unreachable!(),
+    }
 }
 
 fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
