@@ -52,8 +52,6 @@ pub fn balance_handler(report_args: &ArgMatches) {
     let filepath = report_args.get_one::<String>(FILEPATH).expect("required");
     let input_journal: journal::Journal = load_journal(filepath).unwrap();
 
-    input_journal.validate();
-
     let depth = report_args.get_one::<usize>(DEPTH).unwrap_or(&usize::MAX);
 
     let from_date = report_args
@@ -79,6 +77,8 @@ pub fn balance_handler(report_args: &ArgMatches) {
 fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
     let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
     let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
+    input_journal.validate();
+
     Ok(input_journal)
 }
 
