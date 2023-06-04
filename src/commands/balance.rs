@@ -64,7 +64,7 @@ pub fn balance_handler(report_args: &ArgMatches) {
 
     let balances = report::balance::balance(&input_journal, depth, from_date, to_date);
 
-    display_balances(balances);
+    display_table(&balances);
 }
 
 fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
@@ -73,7 +73,7 @@ fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
     Ok(input_journal)
 }
 
-fn display_balances(balances: HashMap<String, Decimal>) {
+fn display_table(balances: &HashMap<String, Decimal>) {
     let mut account_names: Vec<&String> = balances.keys().collect();
     account_names.sort();
 
