@@ -15,6 +15,7 @@ const FILEPATH: &str = "filepath";
 const DEPTH: &str = "depth";
 const FROM_DATE: &str = "from-date";
 const TO_DATE: &str = "to-date";
+const OUTPUT_FORMAT: &str = "output-format";
 
 pub fn balance_command() -> Command {
     Command::new("balance")
@@ -36,6 +37,13 @@ pub fn balance_command() -> Command {
                 .short('t')
                 .long(TO_DATE)
                 .value_parser(value_parser!(NaiveDate)),
+        )
+        .arg(
+            Arg::new(OUTPUT_FORMAT)
+                .short('o')
+                .long(OUTPUT_FORMAT)
+                .value_parser(["table", "json"])
+                .default_value("table"),
         )
 }
 
