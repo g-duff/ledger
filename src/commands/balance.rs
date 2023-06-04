@@ -6,6 +6,7 @@ use chrono::NaiveDate;
 use clap::{value_parser, Arg, ArgMatches, Command};
 use prettytable::format;
 use rust_decimal::prelude::Decimal;
+use serde::Serialize;
 use serde_json;
 
 use crate::journal;
@@ -65,12 +66,36 @@ pub fn balance_handler(report_args: &ArgMatches) {
     let balances = report::balance::balance(&input_journal, depth, from_date, to_date);
 
     display_table(&balances);
+    display_json(&balances);
 }
 
 fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
     let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
     let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
     Ok(input_journal)
+}
+
+fn display_json(balances: &HashMap<String, Decimal>) {
+    #[derive(Serialize)]
+    struct Account {
+        account: String,
+        balance: Decimal,
+    }
+
+    let mut account_names: Vec<&String> = balances.keys().collect();
+    account_names.sort();
+    let accounts: Vec<Account> = account_names
+        .iter()
+        .map(|account_name| {
+            let name = account_name.to_string();
+            Account {
+                balance: *balances.get(&name).unwrap(),
+                account: name,
+            }
+        })
+        .collect();
+
+    println!("{}", serde_json::to_string_pretty(&accounts).unwrap())
 }
 
 fn display_table(balances: &HashMap<String, Decimal>) {
