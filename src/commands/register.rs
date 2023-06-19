@@ -7,24 +7,42 @@ use prettytable::format;
 use crate::journal;
 use crate::report::register;
 
-const FILEPATH: &str = "filepath";
 const ACCOUNT_QUERY: &str = "account";
+const FILEPATH: &str = "filepath";
+const OUTPUT_FORMAT: &str = "output-format";
 
 pub fn register_command() -> Command {
     Command::new("register")
         .arg(Arg::new(FILEPATH).short('p').long(FILEPATH))
         .arg(Arg::new(ACCOUNT_QUERY).short('a').long(ACCOUNT_QUERY))
+        .arg(
+            Arg::new(OUTPUT_FORMAT)
+                .short('o')
+                .long(OUTPUT_FORMAT)
+                .value_parser(["table", "json"])
+                .default_value("table"),
+        )
 }
 
 pub fn register_handler(register_args: &ArgMatches) {
     let filepath = register_args.get_one::<String>(FILEPATH).expect("required");
-    let account_query = register_args.get_one::<String>(ACCOUNT_QUERY).expect("required");
+    let account_query = register_args
+        .get_one::<String>(ACCOUNT_QUERY)
+        .expect("required");
 
     let input_journal: journal::Journal = load_journal(filepath).unwrap();
 
     let register = register::register(&input_journal, account_query);
 
-    display_table(&register);
+    match register_args
+        .get_one::<String>(OUTPUT_FORMAT)
+        .expect("Default is table")
+        .as_str()
+    {
+        "json" => display_json(&register),
+        "table" => display_table(&register),
+        _ => unreachable!(),
+    }
 }
 
 fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
@@ -35,8 +53,11 @@ fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
     Ok(input_journal)
 }
 
-fn display_table(register: &Vec<register::Posting>) {
+fn display_json(register: &Vec<register::Posting>) {
+    println!("{}", serde_json::to_string_pretty(&register).unwrap())
+}
 
+fn display_table(register: &Vec<register::Posting>) {
     let mut table = prettytable::Table::new();
     table.set_titles(row!["Date", "Amount"]);
 
