@@ -2,9 +2,10 @@ use std::error::Error;
 use std::fs;
 
 use clap::{Arg, ArgMatches, Command};
+use prettytable::format;
 
 use crate::journal;
-use crate::report;
+use crate::report::register;
 
 const FILEPATH: &str = "filepath";
 const ACCOUNT_QUERY: &str = "account";
@@ -21,9 +22,9 @@ pub fn register_handler(register_args: &ArgMatches) {
 
     let input_journal: journal::Journal = load_journal(filepath).unwrap();
 
-    let register = report::register::register(&input_journal, account_query);
+    let register = register::register(&input_journal, account_query);
 
-    println!("{:?}", register);
+    display_table(&register);
 }
 
 fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
@@ -32,4 +33,20 @@ fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
     input_journal.validate();
 
     Ok(input_journal)
+}
+
+fn display_table(register: &Vec<register::Posting>) {
+
+    let mut table = prettytable::Table::new();
+    table.set_titles(row!["Date", "Amount"]);
+
+    for posting in register {
+        table.add_row(row![
+            posting.date,
+            r -> format!("{:.2}", posting.amount)
+        ]);
+    }
+
+    table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
+    table.printstd();
 }
