@@ -1,9 +1,10 @@
 use chrono::NaiveDate;
 use rust_decimal::prelude::Decimal;
+use serde::{Deserialize, Serialize};
 
 use crate::journal::Journal;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Posting {
     pub date: NaiveDate,
     pub amount: Decimal,
