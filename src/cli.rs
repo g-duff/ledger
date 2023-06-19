@@ -9,7 +9,7 @@ pub fn main() {
         .get_matches();
 
     match user_input.subcommand() {
-        Some(("balance", report_args)) => commands::balance::balance_handler(report_args),
+        Some(("balance", balance_args)) => commands::balance::balance_handler(balance_args),
         Some(("register", register_args)) => commands::register::register_handler(register_args),
         _ => println!("no command given"),
     }
