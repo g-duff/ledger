@@ -7,6 +7,7 @@ use crate::journal::Journal;
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Posting {
     pub date: NaiveDate,
+    pub account: String,
     pub amount: Decimal,
 }
 
@@ -18,6 +19,7 @@ pub fn register(journal: &Journal, account_query: &str) -> Vec<Posting> {
             if entry.account.starts_with(account_query) {
                 register.push(Posting {
                     date: transaction.date,
+                    account: entry.account.clone(),
                     amount: entry.amount,
                 });
             }
@@ -110,26 +112,32 @@ mod tests {
         let expected_register = vec![
             Posting {
                 date: NaiveDate::from_ymd_opt(2000, 1, 9).unwrap(),
+                account: String::from("assets:current"),
                 amount: Decimal::new(10, 0),
             },
             Posting {
                 date: NaiveDate::from_ymd_opt(2000, 1, 10).unwrap(),
+                account: String::from("assets:saving"),
                 amount: Decimal::new(-120, 0),
             },
             Posting {
                 date: NaiveDate::from_ymd_opt(2000, 1, 10).unwrap(),
+                account: String::from("assets:current"),
                 amount: Decimal::new(120, 0),
             },
             Posting {
                 date: NaiveDate::from_ymd_opt(2000, 1, 11).unwrap(),
+                account: String::from("assets:current"),
                 amount: Decimal::new(-10, 0),
             },
             Posting {
                 date: NaiveDate::from_ymd_opt(2000, 1, 11).unwrap(),
+                account: String::from("assets:current"),
                 amount: Decimal::new(-10, 0),
             },
             Posting {
                 date: NaiveDate::from_ymd_opt(2000, 1, 12).unwrap(),
+                account: String::from("assets:current"),
                 amount: Decimal::new(-30, 0),
             },
         ];
