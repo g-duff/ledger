@@ -1,3 +1,6 @@
+use std::error::Error;
+use std::fs;
+
 use chrono::NaiveDate;
 use rust_decimal::prelude::Decimal;
 use serde::{Deserialize, Serialize};
@@ -46,6 +49,14 @@ impl Journal {
             }
         }
     }
+}
+
+pub fn load_journal(filepath: &String) -> Result<Journal, Box<dyn Error>> {
+    let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
+    let input_journal: Journal = serde_json::from_str(&ledgerfile)?;
+    input_journal.validate();
+
+    Ok(input_journal)
 }
 
 #[cfg(test)]

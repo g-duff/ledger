@@ -1,6 +1,3 @@
-use std::error::Error;
-use std::fs;
-
 use clap::{Arg, ArgMatches, Command};
 use prettytable::format;
 
@@ -30,7 +27,7 @@ pub fn register_handler(register_args: &ArgMatches) {
         .get_one::<String>(ACCOUNT_QUERY)
         .expect("required");
 
-    let input_journal: journal::Journal = load_journal(filepath).unwrap();
+    let input_journal: journal::Journal = journal::load_journal(filepath).unwrap();
 
     let register = register::register(&input_journal, account_query);
 
@@ -43,14 +40,6 @@ pub fn register_handler(register_args: &ArgMatches) {
         "table" => display_table(&register),
         _ => unreachable!(),
     }
-}
-
-fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
-    let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
-    let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
-    input_journal.validate();
-
-    Ok(input_journal)
 }
 
 fn display_json(register: &Vec<register::Posting>) {
