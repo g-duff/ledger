@@ -1,6 +1,4 @@
 use std::collections::HashMap;
-use std::error::Error;
-use std::fs;
 
 use chrono::NaiveDate;
 use clap::{value_parser, Arg, ArgMatches, Command};
@@ -50,7 +48,7 @@ pub fn balance_command() -> Command {
 
 pub fn balance_handler(report_args: &ArgMatches) {
     let filepath = report_args.get_one::<String>(FILEPATH).expect("required");
-    let input_journal: journal::Journal = load_journal(filepath).unwrap();
+    let input_journal: journal::Journal = journal::load_journal(filepath).unwrap();
 
     let depth = report_args.get_one::<usize>(DEPTH).unwrap_or(&usize::MAX);
 
@@ -72,14 +70,6 @@ pub fn balance_handler(report_args: &ArgMatches) {
         "table" => display_table(&balances),
         _ => unreachable!(),
     }
-}
-
-fn load_journal(filepath: &String) -> Result<journal::Journal, Box<dyn Error>> {
-    let ledgerfile: String = fs::read_to_string(filepath)?.parse()?;
-    let input_journal: journal::Journal = serde_json::from_str(&ledgerfile)?;
-    input_journal.validate();
-
-    Ok(input_journal)
 }
 
 fn display_json(balances: &HashMap<String, Decimal>) {
