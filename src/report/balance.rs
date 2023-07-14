@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use chrono::NaiveDate;
 use rust_decimal::prelude::Decimal;
 
-use crate::journal::{Entry, Journal};
+use crate::journal::Journal;
 
 pub fn balance(
     journal: &Journal,
@@ -12,14 +12,12 @@ pub fn balance(
     to_date: &NaiveDate,
 ) -> HashMap<String, Decimal> {
     let entries = journal.entries_between_dates(from_date, to_date);
-    account_balances(&entries, depth)
-}
 
-fn account_balances(entries: &Vec<&Entry>, depth: &usize) -> HashMap<String, Decimal> {
     let mut accounts_amounts = HashMap::new();
-    let mut account_name = String::new();
 
     for entry in entries {
+        let mut account_name = String::default();
+
         for account_name_component in entry.account.split(':').take(*depth) {
             account_name.push_str(account_name_component);
 
@@ -30,8 +28,6 @@ fn account_balances(entries: &Vec<&Entry>, depth: &usize) -> HashMap<String, Dec
 
             account_name.push(':');
         }
-
-        account_name = String::default();
     }
 
     accounts_amounts
