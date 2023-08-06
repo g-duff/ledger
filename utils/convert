@@ -1,6 +1,6 @@
 #!/bin/bash
-
-# Use: ./utils/scratch.sh /Directory-of-csv-statements
+#
+# Convert bank csv exports to json for ledger
 
 load_bank_statements() {
 	for bank in 'hsbc' 'monzo'; do
