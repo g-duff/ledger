@@ -12,10 +12,13 @@ load_bank_statements() {
 process_bank_statements() {
   local bank_name=$1
   local directory=$2
-  for filename in "${directory}"/*"${bank_name}"*.csv; do
-    [[ -f "${filename}" ]] && ./utils/awk/from-"${bank_name}".awk \
-      -v account="$(basename -s .csv "${filename//[-_]/:}")" \
-      "${filename}"
+  for filepath in "${directory}"/*"${bank_name}"*.csv; do
+    if [[ -f "${filepath}" ]]; then
+      local account_name="$(basename -s .csv "${filepath//[-_]/:}")"
+      ./utils/awk/from-"${bank_name}".awk \
+        -v account=$account_name \
+        "${filepath}"
+    fi
   done;
 }
 
