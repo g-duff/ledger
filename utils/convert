@@ -4,7 +4,7 @@
 
 load_bank_statements() {
   local directory=$1
-  for bank_name in 'hsbc' 'monzo'; do
+  for bank_name in 'hsbc' 'monzo' 'tsb'; do
     process_bank_statements "${bank_name}" "${directory}"
   done;
 }
