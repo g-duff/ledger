@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Use: ./utils/scratch.sh /Directory-of-csv-statements
 
 load_bank_statements() {
