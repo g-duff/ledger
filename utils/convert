@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Convert bank csv exports to json for ledger
+
+load_bank_statements() {
+  local directory=$1
+  for bank_name in 'hsbc' 'monzo' 'tsb'; do
+    process_bank_statements "${bank_name}" "${directory}"
+  done;
+}
+
+process_bank_statements() {
+  local bank_name=$1
+  local directory=$2
+  for filepath in "${directory}"/*"${bank_name}"*.csv; do
+    if [[ -f "${filepath}" ]]; then
+      local account_name="$(basename -s .csv "${filepath//[-_]/:}")"
+      ./utils/awk/from-"${bank_name}".awk \
+        -v account=$account_name \
+        "${filepath}"
+    fi
+  done;
+}
+
+(load_bank_statements $1) | sort | ./utils/awk/to-json.awk
