@@ -14,14 +14,9 @@ process_bank_statements() {
   local directory=$2
   for filename in "${directory}"/*"${bank_name}"*.csv; do
     [[ -f "${filename}" ]] && ./utils/awk/from-"${bank_name}".awk \
-      -v account="$(filename_to_accountname "${filename}")" \
+      -v account="$(basename -s .csv "${filename//[-_]/:}")" \
       "${filename}"
   done;
-}
-
-filename_to_accountname() {
-  local filename=$1
-  basename "${filename}" | sed -E 's/-|_/:/g; s/\.\///; s/.csv//'
 }
 
 (load_bank_statements $1) | sort | ./utils/awk/to-json.awk
