@@ -3,8 +3,8 @@
 # Convert bank csv exports to json for ledger
 
 load_bank_statements() {
-	for bank in 'hsbc' 'monzo'; do
-		process_bank_statements $bank $1
+	for bank_name in 'hsbc' 'monzo'; do
+		process_bank_statements $bank_name $1
 	done;
 }
 
