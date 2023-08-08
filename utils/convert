@@ -4,6 +4,17 @@
 
 unset -v DIRECTORY
 
+parse_args() {
+  while getopts "d:" arg; do
+    case $arg in
+      d) 
+        DIRECTORY="$OPTARG"
+        readonly DIRECTORY
+        ;;
+    esac
+  done
+}
+
 load_bank_statements() {
   for bank_name in 'hsbc' 'monzo' 'tsb'; do
     process_bank_statements "${bank_name}"
@@ -24,8 +35,7 @@ process_bank_statements() {
 }
 
 main() {
-  DIRECTORY=$1
-  readonly DIRECTORY
+  parse_args "$@"
   (load_bank_statements) | sort | ./utils/awk/to-json.awk
 }
 
