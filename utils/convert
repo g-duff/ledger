@@ -25,28 +25,29 @@ parse_args() {
   fi
 }
 
-load_bank_statements() {
-  for bank_name in 'hsbc' 'monzo' 'tsb'; do
-    process_bank_statements "${bank_name}"
+format_bank_statements() {
+  for formatting_script in $(ls ./utils/awk/from-*); do
+    apply_format "${formatting_script}"
   done;
 }
 
-process_bank_statements() {
-  local bank_name=$1
+apply_format() {
+  local formatting_script
+  local bank_name
+  local account_name
+  formatting_script=$1
+  bank_name="$(basename -s .awk "${formatting_script/from-/}")"
   for filepath in "${DIRECTORY}"/*"${bank_name}"*.csv; do
     if [[ -f "${filepath}" ]]; then
-      local account_name
       account_name="$(basename -s .csv "${filepath//[-_]/:}")"
-      ./utils/awk/from-"${bank_name}".awk \
-        -v account="$account_name" \
-        "${filepath}"
+      "$formatting_script" -v account="$account_name" "${filepath}"
     fi
   done;
 }
 
 main() {
   parse_args "$@"
-  (load_bank_statements) | sort | ./utils/awk/to-json.awk
+  (format_bank_statements) | sort | ./utils/awk/to-json.awk
 }
 
 main "$@"
