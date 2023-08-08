@@ -4,6 +4,10 @@
 
 unset -v DIRECTORY
 
+usage() {
+  echo "$0 -d <directory containing csv files>" >&2
+}
+
 parse_args() {
   while getopts "d:" arg; do
     case $arg in
@@ -13,6 +17,12 @@ parse_args() {
         ;;
     esac
   done
+
+  if [[ -z "$DIRECTORY" ]]; then
+    echo "No directory specified." >&2
+    usage
+    exit 1
+  fi
 }
 
 load_bank_statements() {
