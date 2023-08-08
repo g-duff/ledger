@@ -14,12 +14,13 @@ process_bank_statements() {
   local directory=$2
   for filepath in "${directory}"/*"${bank_name}"*.csv; do
     if [[ -f "${filepath}" ]]; then
-      local account_name="$(basename -s .csv "${filepath//[-_]/:}")"
+      local account_name
+      account_name="$(basename -s .csv "${filepath//[-_]/:}")"
       ./utils/awk/from-"${bank_name}".awk \
-        -v account=$account_name \
+        -v account="$account_name" \
         "${filepath}"
     fi
   done;
 }
 
-(load_bank_statements $1) | sort | ./utils/awk/to-json.awk
+(load_bank_statements "$1") | sort | ./utils/awk/to-json.awk
