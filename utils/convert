@@ -3,18 +3,23 @@
 # Convert bank csv exports to json for ledger
 
 unset -v DIRECTORY
+unset -v FROM_DATE
 
 usage() {
-  echo "$0 -d <directory containing csv files>" >&2
+  echo "$0 -d <directory containing csv files> [-f <from date in ISO 8601 format>]" >&2
 }
 
 parse_args() {
-  while getopts "d:" arg; do
+  while getopts "d:f:" arg; do
     case $arg in
       d) 
         DIRECTORY="$OPTARG"
         readonly DIRECTORY
         ;;
+      f)
+        FROM_DATE="$OPTARG"
+	readonly OPTARG
+	;;
     esac
   done
 
@@ -39,7 +44,7 @@ apply_format() {
   bank_name="$(basename -s .awk "${formatting_script/from-/}")"
   for filepath in "${DIRECTORY}"/*"${bank_name}"*.csv; do
     if [[ -f "${filepath}" ]]; then
-      account_name="$(basename -s .csv "${filepath//[-_]/:}")"
+      account_name="$(basename -s .csv "${filepath//[_]/:}")"
       "$formatting_script" -v account="$account_name" "${filepath}"
     fi
   done;
@@ -47,7 +52,7 @@ apply_format() {
 
 main() {
   parse_args "$@"
-  (format_bank_statements) | sort | ./utils/awk/to-json.awk
+  (format_bank_statements) | sort | ./utils/awk/to-json.awk -v min_date=${FROM_DATE}
 }
 
 main "$@"
