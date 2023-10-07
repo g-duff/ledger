@@ -44,7 +44,7 @@ mod tests {
     fn test_balance() {
         // Given
         let from_date = NaiveDate::from_ymd_opt(2000, 1, 10).unwrap();
-        let to_date = NaiveDate::from_ymd_opt(2000, 1, 11).unwrap();
+        let to_date = NaiveDate::from_ymd_opt(2000, 1, 12).unwrap();
         let example_journal = Journal {
             transactions: vec![
                 Transaction {

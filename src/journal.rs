@@ -27,7 +27,7 @@ impl Journal {
         let mut entries = Vec::new();
 
         for transaction in &self.transactions {
-            if transaction.date >= *from_date && transaction.date <= *to_date {
+            if transaction.date >= *from_date && transaction.date < *to_date {
                 for entry in &transaction.entries {
                     entries.push(entry);
                 }
