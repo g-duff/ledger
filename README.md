@@ -22,6 +22,10 @@ Go look at them first! This project plays in the sandbox of plain text accountin
 
 * Release to Cargo.
 
+## Build
+
+`podman build --output=. .`
+
 ## License
 
 * [MIT](./LICENSE).
