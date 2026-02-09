@@ -4,13 +4,14 @@
 
 unset -v DIRECTORY
 unset -v FROM_DATE
+unset -v OUT_FORMAT
 
 usage() {
   echo "$0 -d <directory containing csv files> [-f <from date in ISO 8601 format>]" >&2
 }
 
 parse_args() {
-  while getopts "d:f:" arg; do
+  while getopts "d:f:o:" arg; do
     case $arg in
       d) 
         DIRECTORY="$OPTARG"
@@ -18,6 +19,10 @@ parse_args() {
         ;;
       f)
         FROM_DATE="$OPTARG"
+	readonly OPTARG
+	;;
+      o)
+        OUT_FORMAT="${OPTARG:-json}"
 	readonly OPTARG
 	;;
     esac
@@ -52,7 +57,7 @@ apply_format() {
 
 main() {
   parse_args "$@"
-  (format_bank_statements) | sort | ./utils/awk/to-json.awk -v min_date=${FROM_DATE}
+  (format_bank_statements) | sort | ./utils/awk/to-${OUT_FORMAT}.awk -v min_date=${FROM_DATE}
 }
 
 main "$@"
