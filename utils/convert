@@ -19,11 +19,11 @@ parse_args() {
         ;;
       f)
         FROM_DATE="$OPTARG"
-	readonly OPTARG
+	readonly FROM_DATE
 	;;
       o)
         OUT_FORMAT="${OPTARG:-json}"
-	readonly OPTARG
+	readonly OUT_FORMAT
 	;;
     esac
   done
