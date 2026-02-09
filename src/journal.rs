@@ -37,7 +37,6 @@ impl Journal {
     }
 
     pub fn validate(&self) {
-
         let mut balance: Decimal;
         for transaction in &self.transactions {
             balance = Decimal::ZERO;
@@ -68,17 +67,13 @@ mod tests {
     fn test_balance() {
         // Given
         let example_journal = Journal {
-            transactions: vec![
-                Transaction {
-                    date: NaiveDate::from_ymd_opt(2000, 1, 9).unwrap(),
-                    entries: vec![
-                        Entry {
-                            account: String::from("assets:current"),
-                            amount: Decimal::new(10, 0),
-                        }
-                    ],
-                },
-            ],
+            transactions: vec![Transaction {
+                date: NaiveDate::from_ymd_opt(2000, 1, 9).unwrap(),
+                entries: vec![Entry {
+                    account: String::from("assets:current"),
+                    amount: Decimal::new(10, 0),
+                }],
+            }],
         };
 
         // When/Then

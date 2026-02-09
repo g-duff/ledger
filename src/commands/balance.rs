@@ -10,11 +10,9 @@ use serde_json;
 use crate::journal;
 use crate::reports;
 
-const FILEPATH: &str = "filepath";
-const DEPTH: &str = "depth";
-const FROM_DATE: &str = "from-date";
-const TO_DATE: &str = "to-date";
-const OUTPUT_FORMAT: &str = "output-format";
+use super::common::{FILEPATH, DATE_FROM, OUTPUT_FORMAT, DATE_TO};
+
+pub const DEPTH: &str = "depth";
 
 pub fn balance_command() -> Command {
     Command::new("balance")
@@ -26,15 +24,15 @@ pub fn balance_command() -> Command {
                 .value_parser(value_parser!(usize)),
         )
         .arg(
-            Arg::new(FROM_DATE)
+            Arg::new(DATE_FROM)
                 .short('f')
-                .long(FROM_DATE)
+                .long(DATE_FROM)
                 .value_parser(value_parser!(NaiveDate)),
         )
         .arg(
-            Arg::new(TO_DATE)
+            Arg::new(DATE_TO)
                 .short('t')
-                .long(TO_DATE)
+                .long(DATE_TO)
                 .value_parser(value_parser!(NaiveDate)),
         )
         .arg(
@@ -53,10 +51,10 @@ pub fn balance_handler(report_args: &ArgMatches) {
     let depth = report_args.get_one::<usize>(DEPTH).unwrap_or(&usize::MAX);
 
     let from_date = report_args
-        .get_one::<NaiveDate>(FROM_DATE)
+        .get_one::<NaiveDate>(DATE_FROM)
         .unwrap_or(&NaiveDate::MIN);
     let to_date = report_args
-        .get_one::<NaiveDate>(TO_DATE)
+        .get_one::<NaiveDate>(DATE_TO)
         .unwrap_or(&NaiveDate::MAX);
 
     let balances = reports::balance::balance(&input_journal, depth, from_date, to_date);
