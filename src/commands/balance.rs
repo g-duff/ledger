@@ -8,7 +8,7 @@ use serde::Serialize;
 use serde_json;
 
 use crate::journal;
-use crate::report;
+use crate::reports;
 
 const FILEPATH: &str = "filepath";
 const DEPTH: &str = "depth";
@@ -59,7 +59,7 @@ pub fn balance_handler(report_args: &ArgMatches) {
         .get_one::<NaiveDate>(TO_DATE)
         .unwrap_or(&NaiveDate::MAX);
 
-    let balances = report::balance::balance(&input_journal, depth, from_date, to_date);
+    let balances = reports::balance::balance(&input_journal, depth, from_date, to_date);
 
     match report_args
         .get_one::<String>(OUTPUT_FORMAT)

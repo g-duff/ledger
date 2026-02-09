@@ -4,7 +4,7 @@ extern crate prettytable;
 mod cli;
 mod commands;
 mod journal;
-mod report;
+mod reports;
 
 fn main() {
     cli::main();

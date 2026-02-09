@@ -2,7 +2,7 @@ use clap::{Arg, ArgMatches, Command};
 use prettytable::format;
 
 use crate::journal;
-use crate::report::register;
+use crate::reports::register;
 
 const ACCOUNT_QUERY: &str = "account";
 const FILEPATH: &str = "filepath";
