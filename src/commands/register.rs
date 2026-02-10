@@ -4,9 +4,7 @@ use prettytable::format;
 use crate::model::{journal};
 use crate::reports::register;
 
-use super::common::{FILEPATH, OUTPUT_FORMAT};
-
-const ACCOUNT_QUERY: &str = "account";
+use super::constants::{FILEPATH, OUTPUT_FORMAT, ACCOUNT_QUERY};
 
 pub fn register_command() -> Command {
     Command::new("register")

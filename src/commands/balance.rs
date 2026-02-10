@@ -10,9 +10,7 @@ use serde_json;
 use crate::model::{journal};
 use crate::reports;
 
-use super::common::{FILEPATH, DATE_FROM, OUTPUT_FORMAT, DATE_TO};
-
-pub const DEPTH: &str = "depth";
+use super::constants::{FILEPATH, DATE_FROM, OUTPUT_FORMAT, DATE_TO, DEPTH};
 
 pub fn balance_command() -> Command {
     Command::new("balance")
