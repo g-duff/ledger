@@ -1,6 +1,7 @@
 use clap::command;
 
 use crate::commands;
+use crate::controllers;
 
 pub fn main() {
     let user_input = command!()
@@ -9,8 +10,8 @@ pub fn main() {
         .get_matches();
 
     match user_input.subcommand() {
-        Some(("balance", balance_args)) => commands::balance::balance_handler(balance_args),
-        Some(("register", register_args)) => commands::register::register_handler(register_args),
+        Some(("balance", balance_args)) => controllers::balance::balance_handler(balance_args),
+        Some(("register", register_args)) => controllers::register::register_handler(register_args),
         _ => println!("no command given"),
     }
 }
