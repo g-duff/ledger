@@ -22,7 +22,7 @@ parse_args() {
 	readonly FROM_DATE
 	;;
       o)
-        OUT_FORMAT="${OPTARG:-json}"
+        OUT_FORMAT=$OPTARG
 	readonly OUT_FORMAT
 	;;
     esac
@@ -57,7 +57,7 @@ apply_format() {
 
 main() {
   parse_args "$@"
-  (format_bank_statements) | sort | ./utils/awk/to-${OUT_FORMAT}.awk -v min_date=${FROM_DATE}
+  (format_bank_statements) | sort | ./utils/awk/to-${OUT_FORMAT:-yaml}.awk -v min_date=${FROM_DATE}
 }
 
 main "$@"
