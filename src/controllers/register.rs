@@ -2,9 +2,11 @@ use clap::ArgMatches;
 use prettytable::format;
 use serde_json;
 
-use crate::model::journal;
+use crate::model::journal::Journal;
 use crate::commands::constants::{FILEPATH, OUTPUT_FORMAT, ACCOUNT_QUERY};
 use crate::reports::register;
+
+use super::utils;
 
 
 pub fn register_handler(register_args: &ArgMatches) {
@@ -13,7 +15,7 @@ pub fn register_handler(register_args: &ArgMatches) {
         .get_one::<String>(ACCOUNT_QUERY)
         .expect("required");
 
-    let input_journal: journal::Journal = journal::load_journal(filepath).unwrap();
+    let input_journal: Journal = utils::load_journal(filepath).unwrap();
 
     let register = register::register(&input_journal, account_query);
 

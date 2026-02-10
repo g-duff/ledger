@@ -11,10 +11,11 @@ use crate::model::journal;
 use crate::commands::constants::{DEPTH, DATE_TO, DATE_FROM, FILEPATH, OUTPUT_FORMAT};
 use crate::reports;
 
+use super::utils;
 
 pub fn balance_handler(report_args: &ArgMatches) {
     let filepath = report_args.get_one::<String>(FILEPATH).expect("required");
-    let input_journal: journal::Journal = journal::load_journal(filepath).unwrap();
+    let input_journal: journal::Journal = utils::load_journal(filepath).unwrap();
 
     let depth = report_args.get_one::<usize>(DEPTH).unwrap_or(&usize::MAX);
 
