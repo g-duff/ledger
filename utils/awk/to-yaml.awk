@@ -14,7 +14,7 @@ BEGIN { FS="," }
 		       "  entries:\n"\
 		       "  - account: %s\n"\
 		       "    amount: %.2f\n"\
-		       "  - account: '__'\n"\ 
+		       "  - account: '__'\n"\
 		       "    amount: %.2f\n",
 		       date,description,account,amount,(-1*amount)
 	}
