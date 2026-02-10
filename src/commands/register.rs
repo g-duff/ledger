@@ -1,7 +1,7 @@
 use clap::{Arg, ArgMatches, Command};
 use prettytable::format;
 
-use crate::journal;
+use crate::model::{journal};
 use crate::reports::register;
 
 use super::common::{FILEPATH, OUTPUT_FORMAT};

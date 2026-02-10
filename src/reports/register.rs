@@ -2,7 +2,7 @@ use chrono::NaiveDate;
 use rust_decimal::prelude::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::journal::Journal;
+use crate::model::journal::Journal;
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Posting {
@@ -34,7 +34,7 @@ mod tests {
     use chrono::NaiveDate;
 
     use super::*;
-    use crate::journal::{Entry, Transaction};
+    use crate::model::journal::{Entry, Transaction};
 
     #[test]
     fn test_balance() {

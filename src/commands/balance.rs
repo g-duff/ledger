@@ -7,7 +7,7 @@ use rust_decimal::prelude::Decimal;
 use serde::Serialize;
 use serde_json;
 
-use crate::journal;
+use crate::model::{journal};
 use crate::reports;
 
 use super::common::{FILEPATH, DATE_FROM, OUTPUT_FORMAT, DATE_TO};

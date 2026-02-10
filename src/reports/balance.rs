@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use chrono::NaiveDate;
 use rust_decimal::prelude::Decimal;
 
-use crate::journal::Journal;
+use crate::model::journal::Journal;
 
 pub fn balance(
     journal: &Journal,
@@ -38,7 +38,7 @@ mod tests {
     use chrono::NaiveDate;
 
     use super::*;
-    use crate::journal::{Entry, Transaction};
+    use crate::model::journal::{Entry, Transaction};
 
     #[test]
     fn test_balance() {

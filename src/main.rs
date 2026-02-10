@@ -3,7 +3,7 @@ extern crate prettytable;
 
 mod cli;
 mod commands;
-mod journal;
+mod model;
 mod reports;
 
 fn main() {
